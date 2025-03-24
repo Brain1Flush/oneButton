@@ -1,0 +1,16 @@
+.buttonOfAll {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    color: whitesmoke;
+    background-color: dimgray;
+    border-radius: 0.25em;
+    padding: 0.5em;
+}
+
+.buttonOfAll:hover {
+    cursor: pointer;
+    background-color: #505050;
+    font-size: 1.2rem;
+    transition: font-size 0.25s ease-in, background-color 0.25s ease-in;
+}
