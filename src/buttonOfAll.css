@@ -31,26 +31,62 @@
     font-size: 16px;
     border: none;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    /* transition: transform 0.3s ease; stopped working */
     z-index: 10;
 }
 
 .web-node {
     position: absolute;
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     background: #4CAF50;
     color: white;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 0;
-    transform: scale(0.5);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    cursor: pointer;
+    /* opacity: 0; */
+    /* transform: scale(0.5); */
+    /* transition: opacity 0.5s ease, transform 0.5s ease; */
+    user-select: none;
 }
 
-.web-node.show {
+@media (min-width: 900px) {
+    .web-node {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+/* .web-node.show {
     opacity: 1;
     transform: scale(1);
+} */
+
+.feature-panel {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    color: #333;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+}
+
+.feature-panel h2 {
+    margin: 0 0 10px;
+}
+
+.feature-panel button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
 }
