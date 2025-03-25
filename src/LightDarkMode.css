@@ -36,3 +36,13 @@
     left: calc(50px - 25px);
     background-color: yellow;
 }
+
+body.light-mode {
+    background-color: white;
+    color: black;
+}
+
+body.dark-mode {
+    background-color: black;
+    color: white;
+}
