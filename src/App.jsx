@@ -7,7 +7,7 @@ function App() {
 
   return (
     <>
-        <div className='lightDark'><LightDarkMode /></div>
+      <div className='lightDark'><LightDarkMode /></div>
       <ButtonOfAll />
     </>
   )

@@ -4,3 +4,13 @@
     right: 10%;
     top: 1%;
 }
+
+.app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #282c34;
+    overflow: hidden;
+}
