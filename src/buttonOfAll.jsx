@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 import './buttonOfAll.css'
 
 const options = [
@@ -15,15 +16,21 @@ const ButtonOfAll = () => {
     const [radius, setRadius] = useState(150)
     const [activeFeature, setActiveFeature] = useState(null)  // null only
     const [focusedIndex, setFocusedIndex] = useState(0)
+    const [weatherData, setWeatherData] = useState(null)
     const buttonRef = useRef(null)
     const nodeRefs = useRef([])
 
+    const WEATHER_API_KEY = import.meta.env.VITE_APP_WEATHER_API_KEY
+    // console.log(WEATHER_API_KEY)
 
     const toggleExpand = () => {
         setIsExpanded((prev) => !prev)
     }
 
     const handleNodeClick = (feature) => {
+        if (feature.label === "Weather" && !weatherData) {
+            fetchWeather()
+        }
         setActiveFeature(feature)
         setIsExpanded(false)
     }
@@ -48,6 +55,34 @@ const ButtonOfAll = () => {
         document.addEventListener('click', handleOutsideClick)
         return () => document.removeEventListener('click', handleOutsideClick)
     }, [])
+
+    const fetchWeather = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const { latitude, longitude } = position.coords;
+
+                try {
+                    const response = await axios.get(
+                        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${WEATHER_API_KEY}`
+                    );
+
+                    const weatherInfo = `🌡️ ${response.data.main.temp}°C - ${response.data.weather[0].description}`;
+                    setWeatherData(weatherInfo);
+
+                    // Update the Weather node with fetched data
+                    const weatherNodeIndex = options.findIndex(
+                        (option) => option.label === "Weather"
+                    );
+                    options[weatherNodeIndex].content = weatherInfo;
+                } catch (error) {
+                    console.error("Weather fetch error:", error);
+                    setWeatherData("❌ Unable to fetch weather.");
+                }
+            });
+        } else {
+            setWeatherData("❌ Geolocation not supported.");
+        }
+    };
 
     // Keyboard nav
 
@@ -109,13 +144,17 @@ const ButtonOfAll = () => {
                     options.map((option, index) => (
                         <motion.div
                             key={option.id}
-                            ref={(el) => (nodeRefs.current[index] = el)}
+                            className='web-node'
+                            onClick={() => handleNodeClick(option)}
                             tabIndex={0}
                             role="button"
                             aria-label={`Open ${option.label}`}
-                            className='web-node'
-                            onClick={() => handleNodeClick(option)}
+                            style={{
+                                transform: `rotate(${(360 / options.length) * index}deg) translate(150px) rotate(-${(360 / options.length) * index}deg)`
+                            }}
+                            whileHover={{ scale: 1.2, boxShadow: "0 0 15px #4CAF50" }}
                             initial={{ opacity: 0, scale: 0.5 }}
+                            ref={(el) => (nodeRefs.current[index] = el)}
                             animate={{
                                 opacity: 1,
                                 scale: 1,
