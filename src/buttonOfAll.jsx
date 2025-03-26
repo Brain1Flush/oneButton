@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import './buttonOfAll.css'
 
@@ -14,13 +14,18 @@ const ButtonOfAll = () => {
     const [isExpanded, setIsExpanded] = useState(false)
     const [radius, setRadius] = useState(150)
     const [activeFeature, setActiveFeature] = useState(null)  // null only
+    const [focusedIndex, setFocusedIndex] = useState(0)
+    const buttonRef = useRef(null)
+    const nodeRefs = useRef([])
+
 
     const toggleExpand = () => {
-        setIsExpanded(!isExpanded)  // This is fine, leave continue tommorow ig (Why are you talking to yourself)
+        setIsExpanded((prev) => !prev)
     }
 
     const handleNodeClick = (feature) => {
         setActiveFeature(feature)
+        setIsExpanded(false)
     }
 
     useEffect(() => {
@@ -34,17 +39,68 @@ const ButtonOfAll = () => {
         return () => window.removeEventListener('resize', updateRadius)
     }, [])
 
+    useEffect(() => {
+        const handleOutsideClick = (e) => {
+            if (!e.target.closest('.container')) {
+                setIsExpanded(false)
+            }
+        }
+        document.addEventListener('click', handleOutsideClick)
+        return () => document.removeEventListener('click', handleOutsideClick)
+    }, [])
+
+    // Keyboard nav
+
+    const handleKeyDown = (e) => {
+        if (!isExpanded) {
+            if (e.key === "Enter" || e.key === " ") toggleExpand()
+            return
+        }
+
+        switch (e.key) {
+            case "Escape":
+                setIsExpanded(false)
+                buttonRef.current?.focus()
+                break
+            case "ArrowRight":
+            case "ArrowDown":
+                setFocusedIndex((prev) => (prev + 1) % options.length)          // https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Understanding_WCAG/Keyboard
+                break                                                           // https://stackoverflow.com/questions/71376615/how-to-add-keyboard-navigation-accessibility-access-to-existing-website-using
+            case "ArrowLeft":
+            case "ArrowUp":
+                setFocusedIndex((prev) =>
+                    prev === 0 ? options.length - 1 : prev - 1
+                )
+                break
+            case "Enter":
+                handleNodeClick(options[focusedIndex])
+                break
+            default:
+                break
+        }
+    }
+
+    useEffect(() => {
+        if (isExpanded) {
+            nodeRefs.current[focusedIndex]?.focus()
+        }
+    }, [focusedIndex, isExpanded])
+
     return (
-        <div className="container">
+        <div className="container" onKeyDown={handleKeyDown}>
             <motion.button 
+                ref={buttonRef}
                 className="button-all" 
-                onMouseEnter={toggleExpand} 
-                onMouseLeave={toggleExpand}
+                // onMouseEnter={toggleExpand} // was causing issues removed
+                // onMouseLeave={toggleExpand}
+                onClick={toggleExpand}
                 onTouchStart={toggleExpand}
-                animate={{ scale: isExpanded ? 1.1 : 1}}
+                animate={{  scale: isExpanded ? 1.1 : 1 }}
                 whileTap={{ scale: 0.9}}
+                aria-expanded={isExpanded}
+                aria-label="Open feature menu"
                 >
-                This is a button
+                THIS IS A BUTTON
             </motion.button>
 
                 {/* Somehow this is working again, DO NOT TOUCH */}
@@ -53,6 +109,10 @@ const ButtonOfAll = () => {
                     options.map((option, index) => (
                         <motion.div
                             key={option.id}
+                            ref={(el) => (nodeRefs.current[index] = el)}
+                            tabIndex={0}
+                            role="button"
+                            aria-label={`Open ${option.label}`}
                             className='web-node'
                             onClick={() => handleNodeClick(option)}
                             initial={{ opacity: 0, scale: 0.5 }}

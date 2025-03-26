@@ -38,11 +38,13 @@
 }
 
 body.light-mode {
-    background-color: white;
+    background-color: aliceblue;
     color: black;
+    transition: background-color 0.5s linear;
 }
 
 body.dark-mode {
-    background-color: black;
+    background-color: rgb(37, 35, 35);
     color: white;
+    transition: background-color 0.5s linear;
 }

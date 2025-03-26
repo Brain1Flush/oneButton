@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import ButtonOfAll from './ButtonOfAll'
+import ButtonOfAll from './buttonOfAll'
 import LightDarkMode from "./LightDarkMode.jsx";
 
 function App() {
