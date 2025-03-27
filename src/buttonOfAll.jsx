@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import './buttonOfAll.css'
+import { article } from "framer-motion/client";
 
 const options = [
-    { id: 1, label: "News", content: "📰 Latest headlines coming soon!"},
-    { id: 2, label: "Weather", content: "☀️ Current weather: Sunny, 25°C" }, // Make this look at browser location for weather
+    { id: 1, label: "News", content: "Loading latest news..."},
+    { id: 2, label: "Weather", content: "Fetching weather..." }, // Make this look at browser location for weather
     { id: 3, label: "Calendar", content: "📅 No upcoming events today."},
     { id: 4, label: "Search", content: "🔍 Search feature will be here."},
     { id: 5, label: "Notes", content: "📝 Your quick notes will go here." }
@@ -17,10 +18,12 @@ const ButtonOfAll = () => {
     const [activeFeature, setActiveFeature] = useState(null)  // null only
     const [focusedIndex, setFocusedIndex] = useState(0)
     const [weatherData, setWeatherData] = useState(null)
+    const [newsData, setNewsData] = useState(null)
     const buttonRef = useRef(null)
     const nodeRefs = useRef([])
 
     const WEATHER_API_KEY = import.meta.env.VITE_APP_WEATHER_API_KEY
+    const NEWS_API_KEY = import.meta.env.VITE_APP_NEWS_API_KEY
     // console.log(WEATHER_API_KEY)
 
     const toggleExpand = () => {
@@ -30,6 +33,9 @@ const ButtonOfAll = () => {
     const handleNodeClick = (feature) => {
         if (feature.label === "Weather" && !weatherData) {
             fetchWeather()
+        }
+        if (feature.label === "News" && !newsData){
+            fetchNews()
         }
         setActiveFeature(feature)
         setIsExpanded(false)
@@ -76,11 +82,30 @@ const ButtonOfAll = () => {
                     options[weatherNodeIndex].content = weatherInfo;
                 } catch (error) {
                     console.error("Weather fetch error:", error);
-                    setWeatherData("❌ Unable to fetch weather.");
+                    setWeatherData("Unable to fetch weather.");
                 }
             });
         } else {
-            setWeatherData("❌ Geolocation not supported.");
+            setWeatherData("Geolocation not supported.");
+        }
+    };
+
+    const fetchNews = async () => {
+        try {
+            const response = await axios.get(
+                `https://newsapi.org/v2/top-headlines?country=us&pageSize=5&apiKey=${NEWS_API_KEY}`
+            );
+
+            const headlines = response.data.articles
+                .map((article) => `${article.title}`)
+                .join("\n\n");
+            setNewsData(headlines);
+
+            const newsIndex = options.findIndex((o) => o.label === "News");
+            options[newsIndex].content = headlines || "📰 No recent news available.";
+        } catch (error) {
+            console.error("News fetch error:", error);
+            setNewsData("Unable to fetch news.");
         }
     };
 
@@ -144,7 +169,7 @@ const ButtonOfAll = () => {
                     options.map((option, index) => (
                         <motion.div
                             key={option.id}
-                            className='web-node'
+                            className={`web-node ${activeFeature?.id === option.id ? 'active' : ''}`}
                             onClick={() => handleNodeClick(option)}
                             tabIndex={0}
                             role="button"

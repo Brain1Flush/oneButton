@@ -28,8 +28,8 @@
 
 .web-node {
     position: absolute;
-    width: 180px;
-    height: 180px;
+    width: 80px;
+    height: 80px;
     background: #4CAF50;
     color: white;
     border-radius: 50%;
@@ -39,37 +39,51 @@
     cursor: pointer;
     /* opacity: 0; */
     /* transform: scale(0.5); */
-    /* transition: opacity 0.5s ease, transform 0.5s ease; */
+    transition: transform 0.4s ease, width 0.4s ease, height 0.4s ease ; 
     user-select: none;
+}
+
+/* .web-node.active {
+    width: 30px;
+    height: 130px;
+    transform: scale(1.3);
 }
 
 .web-node:focus {
     outline: 3px solid #fff;
-}
+} */
 
 @media (min-width: 900px) {
     .web-node {
         width: 100px;
         height: 100px;
     }
-}
 
-/* .web-node.show {
-    opacity: 1;
-    transform: scale(1);
-} */
+    .web-node.active {
+        width: 160px;
+        height: 160px;
+    }
+}
 
 .feature-panel {
     position: absolute;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: #fff;
+    background: #ffffff;
     color: #333;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     z-index: 20;
+
+    max-width: 90%;
+    min-width: 250px;
+    width: auto;
+    max-height: 80vh;
+    overflow-y: auto;
+    word-wrap: break-word;
+    transition: max-height 0.3s ease, width 0.3s ease;
 }
 
 .feature-panel h2 {
