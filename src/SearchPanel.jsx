@@ -8,7 +8,7 @@ const searchData = [
     "Accessibility in React",
     "Responsive Design",
     "Weather API",
-    "News Headlines",
+    "News Headlines",           // make links to websites like google yt, insta and so on
     "Keyboard Navigation",
 ];
 

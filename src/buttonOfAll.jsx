@@ -10,7 +10,7 @@ const options = [
     { id: 2, label: "Weather", content: "Fetching weather..." }, // Make this look at browser location for weather
     { id: 3, label: "Calendar", content: "📅 No upcoming events today."},
     { id: 4, label: "Search", content: "🔍 Search feature will be here."},
-    { id: 5, label: "Notes", content: "📝 Your quick notes will go here." }
+    { id: 5, label: "Notes App", content: (<a target='_blank' href='https://bbtodolistv2.netlify.app/'>Link to your notes</a>) }
 ]
 
 const ButtonOfAll = () => {
@@ -43,6 +43,9 @@ const ButtonOfAll = () => {
             return
         }
 
+        if (feature.label === "Notes App"){
+            window.open('https://bbtodolistv2.netlify.app/', '_blank')
+        }
 
         if (feature.label === "Weather" && !weatherData) {
             fetchWeather()

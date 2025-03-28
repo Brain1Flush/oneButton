@@ -9,7 +9,7 @@ function App() {
     <>
       <div className='lightDark'><LightDarkMode /></div>
       <ButtonOfAll />
-      <footer>Made by<a href='https://linkedin.com/in/bradley-broekman-5a63702a2' target='_blank'> <strong>@Bradley Broekman</strong></a></footer>
+      <footer>Created by<a href='https://linkedin.com/in/bradley-broekman-5a63702a2' target='_blank'> <strong>@Bradley Broekman</strong></a></footer>
     </>
   )
 }
