@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import './buttonOfAll.css'
+import SearchPanel from "./SearchPanel";
 import { article } from "framer-motion/client";
 
 const options = [
@@ -19,8 +20,9 @@ const ButtonOfAll = () => {
     const [focusedIndex, setFocusedIndex] = useState(0)
     const [weatherData, setWeatherData] = useState(null)
     const [newsData, setNewsData] = useState(null)
+    const [showSearch, setShowSearch] = useState(false)
     const buttonRef = useRef(null)
-    const nodeRefs = useRef([])
+    const nodeRefs = useRef([]) 
 
     const WEATHER_API_KEY = import.meta.env.VITE_APP_WEATHER_API_KEY
     const NEWS_API_KEY = import.meta.env.VITE_APP_NEWS_API_KEY
@@ -30,7 +32,18 @@ const ButtonOfAll = () => {
         setIsExpanded((prev) => !prev)
     }
 
+    const closeSearch = () => {
+        setShowSearch(false)
+        setActiveFeature(null)
+    }
+
     const handleNodeClick = (feature) => {
+        if (feature.label === "Search"){
+            setShowSearch(true)
+            return
+        }
+
+
         if (feature.label === "Weather" && !weatherData) {
             fetchWeather()
         }
@@ -214,6 +227,8 @@ const ButtonOfAll = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
+            {showSearch && <SearchPanel onClose={closeSearch} />}
+            
         </div>
 
         // <div className="buttonOfAll">This is a button</div> not used anymore

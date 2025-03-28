@@ -1,0 +1,122 @@
+
+.search-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 100vh;
+    background: #2a2a2a;
+    z-index: 999;
+    overflow-y: auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 0 0 12px 12px;
+}
+
+.search-header {
+    position: relative;
+    padding: 15px;
+    background: #2a2a2a;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+}
+
+.search-panel input {
+    flex: 1;
+    padding: 12px 40px 12px 15px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    background: #444;
+    font-size: 16px;
+    outline: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.close-btn {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #aaa;
+    font-size: 24px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.search-results-container {
+    padding: 10px 15px;
+    max-height: calc(100vh - 70px);
+    overflow-y: auto;
+}
+
+.search-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.search-panel li {
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    font-size: 15px;
+    transition: background 0.2s ease;
+}
+
+.search-panel li:hover {
+    background: #3a3a3a;
+}
+
+.search-panel li.active-result {
+    background: #4caf50;
+    color: white;
+}
+
+.no-result {
+    color: #bbb;
+    padding: 20px;
+    text-align: center;
+    font-size: 15px;
+}
+
+@media (max-width: 767px) {
+    .search-panel {
+        border-radius: 0;
+    }
+    
+    .search-header {
+        padding: 12px;
+    }
+    
+    .search-panel input {
+        padding: 10px 35px 10px 12px;
+        font-size: 15px;
+    }
+    
+    .close-btn {
+        right: 20px;
+        font-size: 22px;
+    }
+}
+
+@media (min-height: 800px) {
+    .search-results-container {
+        max-height: 600px;
+    }
+}
