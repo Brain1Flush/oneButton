@@ -244,7 +244,7 @@ const ButtonOfAll = () => {
             <AnimatePresence>
                 {activeFeature && (
                     <motion.div
-                        className="feature-panel"
+                        className={`feature-panel ${activeFeature.label === 'Search' ? `search-panel` : ''}`}
                         initial={{ opacity: 0, y: 50 }}             // idk
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 50 }}

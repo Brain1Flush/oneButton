@@ -26,53 +26,53 @@ const searchData = {
 }
 
 const SearchPanel = ({ onClose }) => {
-    const [query, setQuery] = useState('');
-    const [results, setResults] = useState([]);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const inputRef = useRef(null);
-    const resultsRef = useRef(null);
+    const [query, setQuery] = useState('')
+    const [results, setResults] = useState([])
+    const [activeIndex, setActiveIndex] = useState(0)
+    const inputRef = useRef(null)
+    const resultsRef = useRef(null)
 
     useEffect(() => {
         if (query.trim()) {
             const filtered = Obj.keys(searchData).filter(platform => 
                 platform.toLowerCase().includes(query.toLowerCase())
             )
-            setResults(filtered);
-            setActiveIndex(0);
+            setResults(filtered)
+            setActiveIndex(0)
         } else {
-            setResults([]);
+            setResults([])
         }
-    }, [query]);
+    }, [query])
 
     const handleKeyDown = (e) => {
         switch (e.key) {
             case 'ArrowDown':
-                e.preventDefault();
-                setActiveIndex(prev => (prev + 1) % results.length);
+                e.preventDefault()
+                setActiveIndex(prev => (prev + 1) % results.length)
                 break;
             case 'ArrowUp':
-                e.preventDefault();
-                setActiveIndex(prev => (prev - 1 + results.length) % results.length);
+                e.preventDefault()
+                setActiveIndex(prev => (prev - 1 + results.length) % results.length)
                 break;
             case 'Enter':
                 if (results[activeIndex]) {
-                    handleResultSelect(results[activeIndex]);
+                    handleResultSelect(results[activeIndex])
                 }
-                break;
+                break
             case 'Escape':
-                onClose();
-                break;
+                onClose()
+                break
             default:
-                break;
+                break
         }
-    };
+    }
 
     const handleResultSelect = (platform) => {
         if (query.trim() && searchData[platform]){
             window.open(`${searchData[platform]}${encodeURIComponent(query)}`, '_blank')  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
         }
         onClose()
-    };
+    }
 
     useEffect(() => {
         if (resultsRef.current && results.length > 0) {
@@ -81,10 +81,10 @@ const SearchPanel = ({ onClose }) => {
                 activeItem.scrollIntoView({
                     behavior: 'smooth',
                     block: 'nearest'
-                });
+                })
             }
         }
-    }, [activeIndex, results]);
+    }, [activeIndex, results])
 
     return (
         <motion.div
@@ -134,7 +134,7 @@ const SearchPanel = ({ onClose }) => {
                 ) : null}
             </div>
         </motion.div>
-    );
-};
+    )
+}
 
-export default SearchPanel;
+export default SearchPanel
