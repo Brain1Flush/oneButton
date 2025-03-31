@@ -67,8 +67,8 @@
 
 .feature-panel {
     position: absolute;
-    bottom: 20px;
-    left: 50%;
+    bottom: 0px;
+    left: 20%;
     transform: translateX(-50%);
     background: #ffffff;
     color: #333;
@@ -80,7 +80,7 @@
     max-width: 90%;
     min-width: 250px;
     width: auto;
-    max-height: 80vh;
+    max-height: 50vh;
     overflow-y: auto;
     word-wrap: break-word;
     transition: max-height 0.3s ease, width 0.3s ease;
@@ -98,4 +98,57 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
+}
+
+.weather-card {
+    background: linear-gradient(135deg, #5b86e5, #36d1dc);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.weather-card h2 {
+    margin-bottom: 10px;
+}
+
+.weather-card p {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.news-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    max-width: 400px;
+}
+
+.news-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.news-item:last-child {
+    border-bottom: none;
+}
+
+.news-item h3 {
+    font-size: 16px;
+    margin: 0;
+}
+
+.news-item p {
+    font-size: 14px;
+    color: #555;
+}
+
+.news-item a {
+    display: inline-block;
+    margin-top: 5px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
 }

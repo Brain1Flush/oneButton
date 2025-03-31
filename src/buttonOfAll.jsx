@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import './buttonOfAll.css'
 import SearchPanel from "./SearchPanel";
-import { article } from "framer-motion/client";
+import { article, label } from "framer-motion/client";
 
 const options = [
     { id: 1, label: "News", content: "Loading latest news..."},
@@ -26,7 +26,6 @@ const ButtonOfAll = () => {
 
     const WEATHER_API_KEY = import.meta.env.VITE_APP_WEATHER_API_KEY
     const NEWS_API_KEY = import.meta.env.VITE_APP_NEWS_API_KEY
-    // console.log(WEATHER_API_KEY)
 
     const toggleExpand = () => {
         setIsExpanded((prev) => !prev)
@@ -37,23 +36,22 @@ const ButtonOfAll = () => {
         setActiveFeature(null)
     }
 
-    const handleNodeClick = (feature) => {
-        if (feature.label === "Search"){
-            setShowSearch(true)
-            return
+    const handleNodeClick = async (feature) => {
+        if (feature.label === "Weather") {
+            setActiveFeature({ label: "Weather", content: "Fetching weather..." })
+            
+            const weatherInfo = await fetchWeather()
+            setActiveFeature({ label: "Weather", content: weatherInfo })
+        } 
+        else if (feature.label === "News") {
+            setActiveFeature({ label: "News", content: "Fetching news..." })
+            
+            const newsInfo = await fetchNews()
+            setActiveFeature({ label: "News", content: newsInfo })
+        } 
+        else {
+            setActiveFeature(feature)
         }
-
-        if (feature.label === "Notes App"){
-            window.open('https://bbtodolistv2.netlify.app/', '_blank')
-        }
-
-        if (feature.label === "Weather" && !weatherData) {
-            fetchWeather()
-        }
-        if (feature.label === "News" && !newsData){
-            fetchNews()
-        }
-        setActiveFeature(feature)
         setIsExpanded(false)
     }
 
@@ -78,52 +76,80 @@ const ButtonOfAll = () => {
         return () => document.removeEventListener('click', handleOutsideClick)
     }, [])
 
-    const fetchWeather = () => {
+    const fetchWeather = async () => {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const { latitude, longitude } = position.coords;
-
-                try {
-                    const response = await axios.get(
-                        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${WEATHER_API_KEY}`
-                    );
-
-                    const weatherInfo = `🌡️ ${response.data.main.temp}°C - ${response.data.weather[0].description}`;
-                    setWeatherData(weatherInfo);
-
-                    // Update the Weather node with fetched data
-                    const weatherNodeIndex = options.findIndex(
-                        (option) => option.label === "Weather"
-                    );
-                    options[weatherNodeIndex].content = weatherInfo;
-                } catch (error) {
-                    console.error("Weather fetch error:", error);
-                    setWeatherData("Unable to fetch weather.");
-                }
-            });
+            return new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const { latitude, longitude } = position.coords
+    
+                    try {
+                        const response = await axios.get(
+                            `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${WEATHER_API_KEY}`
+                        )
+    
+                        const weatherDetails = response.data
+                        const feelsLike = Math.trunc(weatherDetails.main.feels_like)
+                        const humidity = weatherDetails.main.humidity
+                        const pressure = weatherDetails.main.pressure
+                        const tempMax = Math.trunc(weatherDetails.main.temp_max)
+                        const tempMin = Math.trunc(weatherDetails.main.temp_min)
+                        const description = weatherDetails.weather[0].description
+    
+                        const weatherInfo = `
+                          <div class="weather-card">
+                            <h2>🌤️ ${Math.trunc(weatherDetails.main.temp)}°C - ${description}</h2>
+                            <p><strong>Feels like:</strong> ${feelsLike}°C</p>
+                            <p><strong>Humidity:</strong> ${humidity}%</p>
+                            <p><strong>Pressure:</strong> ${pressure} mBar</p>
+                            <p><strong>Min Temp:</strong> ${tempMin}°C | <strong>Max Temp:</strong> ${tempMax}°C</p>
+                          </div>
+                        `
+    
+                        resolve(weatherInfo)
+                    } catch (error) {
+                        console.error("Weather fetch error:", error)
+                        resolve("<p style='color: red;'> Unable to fetch weather.</p>")
+                    }
+                }, () => {
+                    resolve("<p style='color: red;'> Location access denied.</p>")
+                })
+            })
         } else {
-            setWeatherData("Geolocation not supported.");
+            return "<p style='color: red;'> Geolocation not supported.</p>"
         }
-    };
+    }
+
 
     const fetchNews = async () => {
         try {
             const response = await axios.get(
-                `https://newsapi.org/v2/top-headlines?country=us&pageSize=5&apiKey=${NEWS_API_KEY}`
-            );
-
-            const headlines = response.data.articles
-                .map((article) => `${article.title}`)
-                .join("\n\n");
-            setNewsData(headlines);
-
-            const newsIndex = options.findIndex((o) => o.label === "News");
-            options[newsIndex].content = headlines || "📰 No recent news available.";
+                `https://newsapi.org/v2/top-headlines?country=us&apiKey=${NEWS_API_KEY}`
+            )
+    
+            const articles = response.data.articles.slice(0, 5)
+    
+            if (articles.length === 0) {
+                return "<p>No news available.</p>"
+            }
+    
+            let newsContent = `<div class="news-card">`
+            articles.forEach((article) => {
+                newsContent += `
+                    <div class="news-item">
+                        <h3>${article.title}</h3>
+                        <p>${article.description || "No description available."}</p>
+                        <a href="${article.url}" target="_blank">Read more</a>
+                    </div>
+                `
+            })
+            newsContent += `</div>`
+    
+            return newsContent
         } catch (error) {
-            console.error("News fetch error:", error);
-            setNewsData("Unable to fetch news.");
+            console.error("News fetch error:", error)
+            return "<p style='color: red;'> Unable to fetch news.</p>"
         }
-    };
+    }
 
     // Keyboard nav
 
@@ -225,7 +251,14 @@ const ButtonOfAll = () => {
                         transition={{ duration: 0.5 }}
                     >
                         <h2>{activeFeature.label}</h2>
-                        <p>{activeFeature.content}</p>
+                        {/* <p>{activeFeature.content}</p> */}
+
+                        {activeFeature.label === "Weather" || activeFeature.label === "News" ? (
+                            <div dangerouslySetInnerHTML={{ __html: activeFeature.content }} />
+                        ) : (
+                            <p>{activeFeature.content}</p>
+                        )}
+
                         <button onClick={() => setActiveFeature(null)}>Close</button>
                     </motion.div>
                 )}

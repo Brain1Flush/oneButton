@@ -1,16 +1,29 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import './searchPanel.css';
+import { filter } from 'framer-motion/client';
 
-const searchData = [
-    "React Hooks",
-    "Framer Motion",
-    "Accessibility in React",
-    "Responsive Design",
-    "Weather API",
-    "News Headlines",           // make links to websites like google yt, insta and so on
-    "Keyboard Navigation",
-];
+const searchData = {
+    Google: 'https://www.google.com/search?q=',
+    YouTube: 'https://www.youtube.com/results?search_query=',
+    Instagram: 'https://www.instagram.com/explore/tags/',
+    Twitter: 'https://twitter.com/search?q=',
+    Reddit: 'https://www.reddit.com/search/?q=',
+    Wikipedia: 'https://en.wikipedia.org/wiki/Special:Search?search=',
+    Amazon: 'https://www.amazon.com/s?k=',
+    eBay: 'https://www.ebay.com/sch/i.html?_nkw=',
+    DuckDuckGo: 'https://duckduckgo.com/?q=',
+    Bing: 'https://www.bing.com/search?q=',
+    Yahoo: 'https://search.yahoo.com/search?p=',
+    Pinterest: 'https://www.pinterest.com/search/pins/?q=',
+    TikTok: 'https://www.tiktok.com/search?q=',
+    LinkedIn: 'https://www.linkedin.com/search/results/all/?keywords=',
+    Spotify: 'https://open.spotify.com/search/',
+    GitHub: 'https://github.com/search?q=',
+    StackOverflow: 'https://stackoverflow.com/search?q=',
+    IMDB: 'https://www.imdb.com/find?q=',
+    OpenAI: 'https://platform.openai.com/search?q='
+}
 
 const SearchPanel = ({ onClose }) => {
     const [query, setQuery] = useState('');
@@ -21,9 +34,9 @@ const SearchPanel = ({ onClose }) => {
 
     useEffect(() => {
         if (query.trim()) {
-            const filtered = searchData.filter(item => 
-                item.toLowerCase().includes(query.toLowerCase())
-            );
+            const filtered = Obj.keys(searchData).filter(platform => 
+                platform.toLowerCase().includes(query.toLowerCase())
+            )
             setResults(filtered);
             setActiveIndex(0);
         } else {
@@ -54,9 +67,11 @@ const SearchPanel = ({ onClose }) => {
         }
     };
 
-    const handleResultSelect = (result) => {
-        alert(`You selected: ${result}`);
-        onClose();
+    const handleResultSelect = (platform) => {
+        if (query.trim() && searchData[platform]){
+            window.open(`${searchData[platform]}${encodeURIComponent(query)}`, '_blank')  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+        }
+        onClose()
     };
 
     useEffect(() => {
@@ -86,7 +101,7 @@ const SearchPanel = ({ onClose }) => {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Search here..."
+                    placeholder="Search across platforms..."
                     autoFocus
                     aria-label="Search input"
                 />
@@ -110,7 +125,7 @@ const SearchPanel = ({ onClose }) => {
                                 role="option"
                                 aria-selected={index === activeIndex}
                             >
-                                {result}
+                                {platform}
                             </li>
                         ))}
                     </ul>
