@@ -1,16 +1,17 @@
 
 .search-panel {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 10px;
+    left: 20%;
     right: 0;
-    width: 100%;
-    max-height: 100vh;
+    width: 60%;
+    max-height: 50vh;
     background: #2a2a2a;
     z-index: 999;
     overflow-y: auto;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     border-radius: 0 0 12px 12px;
+    color: white;
 }
 
 .search-header {
@@ -86,6 +87,7 @@
 .search-panel li.active-result {
     background: #4caf50;
     color: white;
+    font-weight: bold;
 }
 
 .no-result {
@@ -98,6 +100,8 @@
 @media (max-width: 767px) {
     .search-panel {
         border-radius: 0;
+        width: 90%;
+        left: 5%;
     }
     
     .search-header {
@@ -111,12 +115,14 @@
     
     .close-btn {
         right: 20px;
-        font-size: 22px;
+        font-size: 28px;
+        width: 40px;
+        height: 40px;
     }
 }
 
 @media (min-height: 800px) {
     .search-results-container {
-        max-height: 600px;
+        max-height: 300px;
     }
 }

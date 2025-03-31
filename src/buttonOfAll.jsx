@@ -37,6 +37,11 @@ const ButtonOfAll = () => {
     }
 
     const handleNodeClick = async (feature) => {
+        if (feature.label === "Search"){
+            setShowSearch(true)
+            return
+        }
+
         if (feature.label === "Weather") {
             setActiveFeature({ label: "Weather", content: "Fetching weather..." })
             
@@ -48,7 +53,7 @@ const ButtonOfAll = () => {
             
             const newsInfo = await fetchNews()
             setActiveFeature({ label: "News", content: newsInfo })
-        } 
+        }
         else {
             setActiveFeature(feature)
         }

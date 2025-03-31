@@ -8,7 +8,7 @@ const searchData = {
     YouTube: 'https://www.youtube.com/results?search_query=',
     Instagram: 'https://www.instagram.com/explore/tags/',
     Twitter: 'https://twitter.com/search?q=',
-    Reddit: 'https://www.reddit.com/search/?q=',
+    Reddit: () => 'https://www.reddit.com/search/?q=',
     Wikipedia: 'https://en.wikipedia.org/wiki/Special:Search?search=',
     Amazon: 'https://www.amazon.com/s?k=',
     eBay: 'https://www.ebay.com/sch/i.html?_nkw=',
@@ -32,9 +32,10 @@ const SearchPanel = ({ onClose }) => {
     const inputRef = useRef(null)
     const resultsRef = useRef(null)
 
+
     useEffect(() => {
         if (query.trim()) {
-            const filtered = Obj.keys(searchData).filter(platform => 
+            const filtered = Object.keys(searchData).filter(platform => 
                 platform.toLowerCase().includes(query.toLowerCase())
             )
             setResults(filtered)
@@ -117,11 +118,11 @@ const SearchPanel = ({ onClose }) => {
             <div className="search-results-container">
                 {results.length > 0 ? (
                     <ul ref={resultsRef} role="listbox">
-                        {results.map((result, index) => (
+                        {results.map((platform, index) => (
                             <li
-                                key={index}
+                                key={platform}
                                 className={index === activeIndex ? 'active-result' : ''}
-                                onClick={() => handleResultSelect(result)}
+                                onClick={() => handleResultSelect(platform)}
                                 role="option"
                                 aria-selected={index === activeIndex}
                             >
