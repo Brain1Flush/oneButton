@@ -152,3 +152,200 @@
     text-decoration: none;
     font-weight: bold;
 }
+
+/* new */
+
+
+/* Add these styles to buttonOfAll.css */
+
+.calendar-container {
+    width: 100%;
+    max-width: 350px;
+    background: #fff;
+    color: #333;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.calendar-header {
+    background: #4CAF50;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+.calendar-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: #eee;
+    padding: 10px;
+}
+
+.weekday {
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 8px 0;
+    background: #f5f5f5;
+}
+
+.day {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.day:hover {
+    background: #f0f0f0;
+}
+
+.day.empty {
+    background: #f8f8f8;
+    cursor: default;
+}
+
+.day.today {
+    background: #e8f5e9;
+    font-weight: bold;
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+}
+
+.day.has-event {
+    font-weight: bold;
+}
+
+.event-dot {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background: #4CAF50;
+    border-radius: 50%;
+}
+
+.upcoming-events {
+    padding: 10px 15px;
+    background: white;
+}
+
+.upcoming-events h4 {
+    margin: 0 0 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+.events-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.events-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+}
+
+.events-list li:last-child {
+    border-bottom: none;
+}
+
+.event-date {
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 13px;
+    color: #555;
+    min-width: 95px;
+}
+
+.event-title {
+    color: #333;
+}
+
+.calendar-actions {
+    padding: 10px 15px;
+    text-align: center;
+    background: #f9f9f9;
+}
+
+.add-event-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s ease;
+}
+
+.add-event-btn:hover {
+    background: #3d8b40;
+}
+
+/* Dark mode calendar styles */
+body.dark-mode .calendar-container {
+    background: #333;
+    color: #f5f5f5;
+}
+
+body.dark-mode .calendar-header {
+    background: #3d8b40;
+}
+
+body.dark-mode .calendar-grid {
+    background: #222;
+}
+
+body.dark-mode .weekday {
+    background: #444;
+    color: #eee;
+}
+
+body.dark-mode .day {
+    background: #3a3a3a;
+    color: #eee;
+}
+
+body.dark-mode .day.empty {
+    background: #2a2a2a;
+}
+
+body.dark-mode .day.today {
+    background: #3d8b40;
+    color: white;
+    border: 1px solid #4CAF50;
+}
+
+body.dark-mode .upcoming-events,
+body.dark-mode .calendar-actions {
+    background: #333;
+}
+
+body.dark-mode .events-list li {
+    border-bottom: 1px solid #444;
+}
+
+body.dark-mode .event-date {
+    color: #bbb;
+}
+
+body.dark-mode .event-title {
+    color: #eee;
+}

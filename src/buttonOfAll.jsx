@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import './buttonOfAll.css'
 import SearchPanel from "./SearchPanel";
-import { article, label } from "framer-motion/client";
 
 const options = [
     { id: 1, label: "News", content: "Loading latest news..."},
@@ -20,12 +19,14 @@ const ButtonOfAll = () => {
     const [focusedIndex, setFocusedIndex] = useState(0)
     const [weatherData, setWeatherData] = useState(null)
     const [newsData, setNewsData] = useState(null)
+    const [calendarEvents, setCalendarEvents] = useState(null)
     const [showSearch, setShowSearch] = useState(false)
     const buttonRef = useRef(null)
     const nodeRefs = useRef([]) 
 
     const WEATHER_API_KEY = import.meta.env.VITE_APP_WEATHER_API_KEY
-    const NEWS_API_KEY = import.meta.env.VITE_APP_NEWS_API_KEY
+    // const NEWS_API_KEY = import.meta.env.VITE_APP_NEWS_API_KEY  not suitable for deployment
+    const GNEWS_API_KEY = import.meta.env.VITE_APP_GNEWS_API_KEY
 
     const toggleExpand = () => {
         setIsExpanded((prev) => !prev)
@@ -53,6 +54,12 @@ const ButtonOfAll = () => {
             
             const newsInfo = await fetchNews()
             setActiveFeature({ label: "News", content: newsInfo })
+        }
+        else if (feature.label === "Calendar"){
+            setActiveFeature({ label: "Calendar", content: "Loading calendar..." })
+
+            const calendarInfo = await fetchCalendar()
+            setActiveFeature({ label: "Calendar", content: calendarInfo })
         }
         else {
             setActiveFeature(feature)
@@ -128,7 +135,7 @@ const ButtonOfAll = () => {
     const fetchNews = async () => {
         try {
             const response = await axios.get(
-                `https://newsapi.org/v2/top-headlines?country=us&apiKey=${NEWS_API_KEY}`
+                `https://gnews.io/api/v4/top-headlines?country=us&token=${GNEWS_API_KEY}`
             )
     
             const articles = response.data.articles.slice(0, 5)
@@ -153,6 +160,101 @@ const ButtonOfAll = () => {
         } catch (error) {
             console.error("News fetch error:", error)
             return "<p style='color: red;'> Unable to fetch news.</p>"
+        }
+    }
+
+    const fetchCalendar = async () => {
+        try {
+            const now = new Date()
+            const currentYear = now.getFullYear()
+            const currentMonth = now.getMonth()
+            const currentDay = now.getDate()
+
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
+            const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay()
+
+            const monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ]
+
+            const events = [
+                { date: new Date(currentYear, currentMonth, currentDay), title: "Monday's Marker" },
+                { date: new Date(currentYear, currentMonth, currentDay + 2), title: "Meeting" },
+                { date: new Date(currentYear, currentMonth, currentDay + 5), title: "Appointment" }
+            ]
+            setCalendarEvents(events)
+
+            let calendarContent = `
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <h3>${monthNames[currentMonth]} ${currentYear}</h3>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="weekday">Sun</div>
+                        <div class="weekday">Mon</div>
+                        <div class="weekday">Tue</div>
+                        <div class="weekday">Wed</div>
+                        <div class="weekday">Thu</div>
+                        <div class="weekday">Fri</div>
+                        <div class="weekday">Sat</div>
+            `
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                calendarContent += `<div class="day empty"></div>`
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const hasEvent = events.some(event =>
+                    event.date.getDate() === day &&
+                    event.date.getMonth() === currentMonth
+                )
+
+                const isToday = day === currentDay
+
+                if (isToday) {
+                    calendarContent += `<div class="day today">${day}${hasEvent ? '<span class="event-dot"></span>' : ''}</div>`
+                } else if (hasEvent) {
+                    calendarContent += `<div class="day has-event">${day}<span class="event-dot"></span></div>`
+                } else {
+                    calendarContent += `<div class="day">${day}</div>`
+                }
+            }
+
+            calendarContent += `
+                </div>
+                <div class="upcoming-events">
+                    <h4>Upcoming Events</h4>
+            `
+
+            if (events.length > 0) {
+                calendarContent += `<ul class="events-list">`
+                events.forEach(event => {
+                    calendarContent += `
+                        <li>
+                            <span class="event-date">${event.date.getDate()} ${monthNames[event.date.getMonth()]}</span>
+                            <span class="event-title">${event.title}</span>
+                        </li>
+                    `
+                })
+                calendarContent += `</ul>`
+            } else {
+                calendarContent += `<p>No upcoming events</p>`
+            }
+
+            calendarContent += `
+                </div>
+                <div>
+                    <div class="calendar-actions">
+                        <button class="add-event-btn">Add Event</button>
+                    </div>
+                </div>
+            `
+
+            return calendarContent
+
+        } catch (error) {
+            console.error("Calendar error:", error)
+            return "<p style='color: red;'>Unable to load calendar.</p>"
         }
     }
 
@@ -258,7 +360,7 @@ const ButtonOfAll = () => {
                         <h2>{activeFeature.label}</h2>
                         {/* <p>{activeFeature.content}</p> */}
 
-                        {activeFeature.label === "Weather" || activeFeature.label === "News" ? (
+                        {activeFeature.label === "Weather" || activeFeature.label === "News" || activeFeature.label === "Calendar" ? (
                             <div dangerouslySetInnerHTML={{ __html: activeFeature.content }} />
                         ) : (
                             <p>{activeFeature.content}</p>
