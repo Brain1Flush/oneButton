@@ -132,8 +132,41 @@ const ButtonOfAll = () => {
     }
 
 
+    // const fetchNews = async () => {
+    //     try {
+    //         const response = await axios.get(
+    //             `https://gnews.io/api/v4/top-headlines?country=us&token=${GNEWS_API_KEY}`
+    //         )
+    
+    //         const articles = response.data.articles.slice(0, 5)
+    
+    //         if (articles.length === 0) {
+    //             return "<p>No news available.</p>"
+    //         }
+    
+    //         let newsContent = `<div class="news-card">`
+    //         articles.forEach((article) => {
+    //             newsContent += `
+    //                 <div class="news-item">
+    //                     <h3>${article.title}</h3>
+    //                     <p>${article.description || "No description available."}</p>
+    //                     <a href="${article.url}" target="_blank">Read more</a>
+    //                 </div>
+    //             `
+    //         })
+    //         newsContent += `</div>`
+    
+    //         return newsContent
+    //     } catch (error) {
+    //         console.error("News fetch error:", error)
+    //         return "<p style='color: red;'> Unable to fetch news.</p>"
+    //     }
+    // }
+
+
     const fetchNews = async () => {
         try {
+            // Using GNews API instead of NewsAPI
             const response = await axios.get(
                 `https://gnews.io/api/v4/top-headlines?country=us&token=${GNEWS_API_KEY}`
             )
@@ -159,7 +192,38 @@ const ButtonOfAll = () => {
             return newsContent
         } catch (error) {
             console.error("News fetch error:", error)
-            return "<p style='color: red;'> Unable to fetch news.</p>"
+            
+            // Fallback to free Guardian API if GNews fails
+            try {
+                const guardianResponse = await axios.get(
+                    'https://content.guardianapis.com/search?section=news&show-fields=headline,trailText&api-key=test'
+                )
+                
+                const guardianArticles = guardianResponse.data.response.results.slice(0, 5)
+                
+                let newsContent = `<div class="news-card">`
+                guardianArticles.forEach((article) => {
+                    newsContent += `
+                        <div class="news-item">
+                            <h3>${article.webTitle}</h3>
+                            <p>${article.fields?.trailText || "No description available."}</p>
+                            <a href="${article.webUrl}" target="_blank">Read more</a>
+                        </div>
+                    `
+                })
+                newsContent += `</div>`
+                
+                return newsContent
+            } catch (fallbackError) {
+                console.error("Fallback news fetch error:", fallbackError)
+                return `<p style='color: red;'>Unable to fetch news. Please check your API key.</p>
+                        <p>Consider using one of these free news APIs:</p>
+                        <ul>
+                            <li>GNews API (https://gnews.io/) - 100 free requests/day</li>
+                            <li>The Guardian API (https://open-platform.theguardian.com/)</li>
+                            <li>New York Times API (https://developer.nytimes.com/)</li>
+                        </ul>`
+            }
         }
     }
 
