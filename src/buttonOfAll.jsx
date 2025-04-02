@@ -7,7 +7,7 @@ import SearchPanel from "./SearchPanel";
 const options = [
     { id: 1, label: "News", content: "Loading latest news..."},
     { id: 2, label: "Weather", content: "Fetching weather..." }, // Make this look at browser location for weather
-    { id: 3, label: "Calendar", content: "📅 No upcoming events today."},
+    { id: 3, label: "Calendar", content: (<><a target="_blank" href="https://calendar.google.com/calendar/u/0/r">Link to your Google Calendar</a><div className="cal-id">custom app coming soon</div></>)},
     { id: 4, label: "Search", content: "🔍 Search feature will be here."},
     { id: 5, label: "Notes App", content: (<a target='_blank' href='https://bbtodolistv2.netlify.app/'>Link to your notes</a>) }
 ]
@@ -19,7 +19,7 @@ const ButtonOfAll = () => {
     const [focusedIndex, setFocusedIndex] = useState(0)
     const [weatherData, setWeatherData] = useState(null)
     const [newsData, setNewsData] = useState(null)
-    const [calendarEvents, setCalendarEvents] = useState(null)
+    const [newEvent, setNewEvent] = useState({ title: "", date: "" })
     const [showSearch, setShowSearch] = useState(false)
     const buttonRef = useRef(null)
     const nodeRefs = useRef([]) 
@@ -54,12 +54,6 @@ const ButtonOfAll = () => {
             
             const newsInfo = await fetchNews()
             setActiveFeature({ label: "News", content: newsInfo })
-        }
-        else if (feature.label === "Calendar"){
-            setActiveFeature({ label: "Calendar", content: "Loading calendar..." })
-
-            const calendarInfo = await fetchCalendar()
-            setActiveFeature({ label: "Calendar", content: calendarInfo })
         }
         else {
             setActiveFeature(feature)
@@ -131,42 +125,8 @@ const ButtonOfAll = () => {
         }
     }
 
-
-    // const fetchNews = async () => {
-    //     try {
-    //         const response = await axios.get(
-    //             `https://gnews.io/api/v4/top-headlines?country=us&token=${GNEWS_API_KEY}`
-    //         )
-    
-    //         const articles = response.data.articles.slice(0, 5)
-    
-    //         if (articles.length === 0) {
-    //             return "<p>No news available.</p>"
-    //         }
-    
-    //         let newsContent = `<div class="news-card">`
-    //         articles.forEach((article) => {
-    //             newsContent += `
-    //                 <div class="news-item">
-    //                     <h3>${article.title}</h3>
-    //                     <p>${article.description || "No description available."}</p>
-    //                     <a href="${article.url}" target="_blank">Read more</a>
-    //                 </div>
-    //             `
-    //         })
-    //         newsContent += `</div>`
-    
-    //         return newsContent
-    //     } catch (error) {
-    //         console.error("News fetch error:", error)
-    //         return "<p style='color: red;'> Unable to fetch news.</p>"
-    //     }
-    // }
-
-
     const fetchNews = async () => {
         try {
-            // Using GNews API instead of NewsAPI
             const response = await axios.get(
                 `https://gnews.io/api/v4/top-headlines?country=us&token=${GNEWS_API_KEY}`
             )
@@ -227,100 +187,6 @@ const ButtonOfAll = () => {
         }
     }
 
-    const fetchCalendar = async () => {
-        try {
-            const now = new Date()
-            const currentYear = now.getFullYear()
-            const currentMonth = now.getMonth()
-            const currentDay = now.getDate()
-
-            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
-            const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay()
-
-            const monthNames = [
-                'January', 'February', 'March', 'April', 'May', 'June',
-                'July', 'August', 'September', 'October', 'November', 'December'
-            ]
-
-            const events = [
-                { date: new Date(currentYear, currentMonth, currentDay), title: "Monday's Marker" },
-                { date: new Date(currentYear, currentMonth, currentDay + 2), title: "Meeting" },
-                { date: new Date(currentYear, currentMonth, currentDay + 5), title: "Appointment" }
-            ]
-            setCalendarEvents(events)
-
-            let calendarContent = `
-                <div class="calendar-container">
-                    <div class="calendar-header">
-                        <h3>${monthNames[currentMonth]} ${currentYear}</h3>
-                    </div>
-                    <div class="calendar-grid">
-                        <div class="weekday">Sun</div>
-                        <div class="weekday">Mon</div>
-                        <div class="weekday">Tue</div>
-                        <div class="weekday">Wed</div>
-                        <div class="weekday">Thu</div>
-                        <div class="weekday">Fri</div>
-                        <div class="weekday">Sat</div>
-            `
-            for (let i = 0; i < firstDayOfMonth; i++) {
-                calendarContent += `<div class="day empty"></div>`
-            }
-
-            for (let day = 1; day <= daysInMonth; day++) {
-                const hasEvent = events.some(event =>
-                    event.date.getDate() === day &&
-                    event.date.getMonth() === currentMonth
-                )
-
-                const isToday = day === currentDay
-
-                if (isToday) {
-                    calendarContent += `<div class="day today">${day}${hasEvent ? '<span class="event-dot"></span>' : ''}</div>`
-                } else if (hasEvent) {
-                    calendarContent += `<div class="day has-event">${day}<span class="event-dot"></span></div>`
-                } else {
-                    calendarContent += `<div class="day">${day}</div>`
-                }
-            }
-
-            calendarContent += `
-                </div>
-                <div class="upcoming-events">
-                    <h4>Upcoming Events</h4>
-            `
-
-            if (events.length > 0) {
-                calendarContent += `<ul class="events-list">`
-                events.forEach(event => {
-                    calendarContent += `
-                        <li>
-                            <span class="event-date">${event.date.getDate()} ${monthNames[event.date.getMonth()]}</span>
-                            <span class="event-title">${event.title}</span>
-                        </li>
-                    `
-                })
-                calendarContent += `</ul>`
-            } else {
-                calendarContent += `<p>No upcoming events</p>`
-            }
-
-            calendarContent += `
-                </div>
-                <div>
-                    <div class="calendar-actions">
-                        <button class="add-event-btn">Add Event</button>
-                    </div>
-                </div>
-            `
-
-            return calendarContent
-
-        } catch (error) {
-            console.error("Calendar error:", error)
-            return "<p style='color: red;'>Unable to load calendar.</p>"
-        }
-    }
 
     // Keyboard nav
 
@@ -367,7 +233,7 @@ const ButtonOfAll = () => {
                 // onMouseEnter={toggleExpand} // was causing issues removed
                 // onMouseLeave={toggleExpand}
                 onClick={toggleExpand}
-                onTouchStart={toggleExpand}
+                // onTouchStart={toggleExpand} // makes the button a hold to open instead of toggle on mobile
                 animate={{  scale: isExpanded ? 1.1 : 1 }}
                 whileTap={{ scale: 0.9}}
                 aria-expanded={isExpanded}
@@ -424,7 +290,7 @@ const ButtonOfAll = () => {
                         <h2>{activeFeature.label}</h2>
                         {/* <p>{activeFeature.content}</p> */}
 
-                        {activeFeature.label === "Weather" || activeFeature.label === "News" || activeFeature.label === "Calendar" ? (
+                        {activeFeature.label === "Weather" || activeFeature.label === "News" ? (
                             <div dangerouslySetInnerHTML={{ __html: activeFeature.content }} />
                         ) : (
                             <p>{activeFeature.content}</p>
