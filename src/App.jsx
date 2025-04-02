@@ -9,7 +9,7 @@ function App() {
     <>
       <div className='lightDark'><LightDarkMode /></div>
       <ButtonOfAll />
-      <footer>Created by<a href='https://linkedin.com/in/bradley-broekman-5a63702a2' target='_blank'> <strong>@Bradley Broekman</strong></a></footer>
+      <footer><div><a href='https://github.com/Brain1Flush/oneButton' target='_blank'>GitHub</a></div>Created by<a href='https://linkedin.com/in/bradley-broekman-5a63702a2' target='_blank'> <strong>@Bradley Broekman</strong></a></footer>
     </>
   )
 }
